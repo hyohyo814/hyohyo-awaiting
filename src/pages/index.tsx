@@ -19,15 +19,34 @@ export default function Home() {
     return <span id={`${group}`} key={idx} className="">{el}</span>
   });
 
-  console.log(testMap)
- 
+  interface WordChunk {
+    [key: string]: string[]
+  }
 
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
+     
     const target = e.target as HTMLInputElement;
     const inputSplit = target.value.split("");
+    let inputGroup = 0;
+    const wordGroup: WordChunk = {};
+    console.log(wordGroup)
+    let store: string[] = [];
+    inputSplit.forEach((el, idx) => {
+      if (el === " ") {
+        console.log(store)
+        wordGroup[inputGroup] = store;
+        store = [];
+        inputGroup++;
+        console.log("space detected");
+      } 
+      el !== " " && store.push(el);
+    })
+
+    console.log(wordGroup)
+
     const displayChars = document.getElementsByClassName("display_char") as HTMLCollectionOf<HTMLSpanElement>;
-    console.log(inputSplit)
+    
     inputSplit.forEach((el, idx) => {
       if (el === displayChars[idx]?.innerText) {
         console.log("match")
