@@ -28,10 +28,10 @@ function TestMap() {
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const { user, isSignedIn, isLoaded } = useUser();
-
+  const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
 
   interface WordChunk {
-    [key: string]: string[]
+    [key: string]: string[] 
   }
 
   function typingHandle(e: React.SyntheticEvent) {
@@ -42,17 +42,53 @@ export default function Home() {
     let strCount = 0;
     let extraCount = 0;
     const wordGroup: WordChunk = {};
+    const result: React.JSX.Element[] = [];
 
+    inputSplit.forEach((el, idx) => {
+      if (!wordGroup[inputGroup]) {
+        wordGroup[inputGroup] = [];
+      }
+
+      console.log(strCount)
+      let displayChars = document.querySelectorAll(`[id='group/${inputGroup}']`);
+      const focus = displayChars[strCount] as HTMLSpanElement;
+
+      switch(true) {
+        case el === " ":
+          if (strCount !== 0) {
+            inputGroup++;
+            strCount = 0;
+            extraCount = 0;
+            result.push(<span key={idx} className="m-1">{el}</span>);
+            break;
+          } else {
+            break;
+          }
+        case el === focus?.innerText:
+          result.push(<span key={idx} className="text-green-500">{el}</span>);
+          wordGroup[inputGroup]!.push(el);
+          strCount++;
+          break;
+        case el !==focus?.innerText:
+          result.push(<span key={idx} className="text-rose-500">{el}</span>);
+          wordGroup[inputGroup]!.push(el);
+          strCount++;
+          break;
+        default:
+          break;
+      }
+    })
+      
+    setOutputArr(result);
+/*
     inputSplit.forEach((el, idx) => {
       let displayChars = document.querySelectorAll(`[id='group/${inputGroup}']`);
       let divGroup = document.querySelector(`[id='word_group/${inputGroup}']`);
       const focus = displayChars[strCount] as HTMLSpanElement;
       if (!wordGroup[inputGroup]) {
         wordGroup[inputGroup] = [];
-      };
-      
-
-      switch (true) { 
+      };      
+      switch (true) {
         case el === " ":
           if (strCount !== 0) {
             inputGroup++;
@@ -89,9 +125,13 @@ export default function Home() {
           break;
       }
     })
+    console.log('=======================================================')
+    console.log(document.querySelector(`[id='word_group/${inputGroup}']`)?.children)
+    console.log('wordGroup: ', inputGroup);
     console.log('strCount: ', strCount);
     console.log('extraCount: ', extraCount);
-/*
+*/
+    /*
     console.log(Object.keys(wordGroup).length)
     for (let i = 0; i <= inputGroup; i++) {
       let displayChars = document.querySelectorAll(`[id='group/${i}']`);
@@ -105,8 +145,7 @@ export default function Home() {
         }
       }) 
     }
-*/
-    
+   */ 
     /*
     inputSplit.forEach((el, idx) => {
       if (el === displayChars[idx]?.innerText) {
@@ -141,10 +180,15 @@ export default function Home() {
               font-light tracking-tight"
               onChange={typingHandle}
             />
-            <div id="text_display" className="flex flex-wrap w-full text-white
+            <div id="text_display" className="text_display flex flex-wrap w-full text-white
               break-normal text-4xl px-12 py-2 tracking-tight font-light
               gap-2">
               <TestMap />
+            </div>
+            <div id="text_display" className="text_display flex flex-wrap w-full text-white
+              break-normal text-4xl px-12 py-2 tracking-tight font-light
+              ">
+              {outputArr}
             </div>
           </div>
         </>
