@@ -28,7 +28,6 @@ function TestMap() {
 export default function Home() {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const { user, isSignedIn, isLoaded } = useUser();
-  const [extraCount, setExtraCount] = useState(0);
 
 
   interface WordChunk {
@@ -41,6 +40,7 @@ export default function Home() {
     const inputSplit = target.value.split("");
     let inputGroup = 0;
     let strCount = 0;
+    let extraCount = 0;
     const wordGroup: WordChunk = {};
 
     inputSplit.forEach((el, idx) => {
@@ -57,7 +57,7 @@ export default function Home() {
           if (strCount !== 0) {
             inputGroup++;
             strCount = 0;
-            setExtraCount(0);;
+            extraCount = 0;
           } else {
             console.log('spam')
             break;
@@ -77,9 +77,8 @@ export default function Home() {
             strCount++;
           } else {
             const tmp = extraCount + 1;
-            setExtraCount(extraCount + 1);
-            const extraElement = `<span id={'extra/${inputGroup}/${tmp}'} class="text-rose-500">${el}</span>`;
-            console.log(document.querySelector(`[id='extra/${inputGroup}/${tmp}']`))
+            extraCount++;
+            const extraElement = `<span id='extra/${inputGroup}/${tmp}' class="text-rose-500">${el}</span>`;
             if (!!divGroup && !document.querySelector(`[id='extra/${inputGroup}/${tmp}']`)) {
               divGroup.insertAdjacentHTML("beforeend", extraElement);
             }
