@@ -26,7 +26,6 @@ function TestMap() {
 
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const { user, isSignedIn, isLoaded } = useUser();
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
 
@@ -80,81 +79,6 @@ export default function Home() {
     })
       
     setOutputArr(result);
-/*
-    inputSplit.forEach((el, idx) => {
-      let displayChars = document.querySelectorAll(`[id='group/${inputGroup}']`);
-      let divGroup = document.querySelector(`[id='word_group/${inputGroup}']`);
-      const focus = displayChars[strCount] as HTMLSpanElement;
-      if (!wordGroup[inputGroup]) {
-        wordGroup[inputGroup] = [];
-      };      
-      switch (true) {
-        case el === " ":
-          if (strCount !== 0) {
-            inputGroup++;
-            strCount = 0;
-            extraCount = 0;
-          } else {
-            console.log('spam')
-            break;
-          }
-          break;
-        case el === focus?.innerText:
-          displayChars[strCount]?.removeAttribute("class");
-          displayChars[strCount]?.setAttribute("class", "text-green-500");
-          wordGroup[inputGroup]!.push(el);
-          strCount++;
-          break;
-        case el !== focus?.innerText:
-          displayChars[strCount]?.removeAttribute("class");
-          displayChars[strCount]?.setAttribute("class", "text-rose-500");
-          wordGroup[inputGroup]!.push(el);
-          if (strCount < displayChars.length) {
-            strCount++;
-          } else {
-            const tmp = extraCount + 1;
-            extraCount++;
-            const extraElement = `<span id='extra/${inputGroup}/${tmp}' class="text-rose-500">${el}</span>`;
-            if (!!divGroup && !document.querySelector(`[id='extra/${inputGroup}/${tmp}']`)) {
-              divGroup.insertAdjacentHTML("beforeend", extraElement);
-            }
-          };
-          break;
-        default:
-          console.log('defaulted');
-          break;
-      }
-    })
-    console.log('=======================================================')
-    console.log(document.querySelector(`[id='word_group/${inputGroup}']`)?.children)
-    console.log('wordGroup: ', inputGroup);
-    console.log('strCount: ', strCount);
-    console.log('extraCount: ', extraCount);
-*/
-    /*
-    console.log(Object.keys(wordGroup).length)
-    for (let i = 0; i <= inputGroup; i++) {
-      let displayChars = document.querySelectorAll(`[id='group/${i}']`);
-      displayChars.forEach((el, idx) => {
-        if ((el as HTMLSpanElement)?.innerText === wordGroup[i]?.[idx]) {
-          displayChars[idx]?.setAttribute("class", "text-green-500");
-        } else if (!wordGroup[idx]) {
-          displayChars[idx]?.setAttribute("class", "text-white");
-        } else {
-          displayChars[idx]?.setAttribute("class", "text-rose-500");
-        }
-      }) 
-    }
-   */ 
-    /*
-    inputSplit.forEach((el, idx) => {
-      if (el === displayChars[idx]?.innerText) {
-        console.log("match")
-      } else {
-        console.log("wrong")
-      }
-    })
-    */
   }
 
   return (
