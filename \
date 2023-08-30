@@ -19,59 +19,25 @@ function TestCode() {
   // string for code sample
   for (const line of codeSample1) {
     const split = line.split("");
+    console.log(split)
     codeParse.push(split);
   }
 
   let group = 0;
   let divGroup: React.JSX.Element[] = [];
-  let lineGroup: React.JSX.Element[] = [];
   const htmlTransform: React.JSX.Element[] = [];
 
-  codeParse.forEach((spread, line) => {
-    let strCount = 0;
+  for (const spread of codeParse) {
     spread.forEach((el, idx) => {
-      switch(true) {
-        case el === " ":
-          lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="mr-2">{divGroup}</div>);
-          divGroup = [];
-          group++;
-          strCount = 0;
-          break;
-        case /\(|\)/g.test(el):
-          lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="">{divGroup}</div>);
-          divGroup = [];
-          group++;
-          strCount = 0;
-          if (/\(/g.test(el)) {
-            divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
-            lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="">{divGroup}</div>);
-            divGroup = [];
-            group++;
-          } else if (/\)/g.test(el)) {
-            divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
-            lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="">{divGroup}</div>);
-            divGroup = [];
-            group++;
-          }
-          break;
-        default:
-          divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>);
-          strCount++;
-          if (idx === spread.length - 1) {
-            lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`}>{divGroup}</div>);
-            divGroup = [];
-            group = 0;
-          }
-          break;
+      if (el === " ") {
+        htmlTransform.push(<div key={`group_display/${group}`} id={`word_group/${group}`}>{divGroup}</div>);
+        group++;
+        divGroup = [];
+      } else {
+        divGroup.push(<span id={`group/${group}`} key={`display/${group}/${idx}`} className="text-2xl font-light font-mono">{el}</span>)
       }
-
-    })
-     
-    htmlTransform.push(<div key={`line${line}`} id={`line${line}`} className="w-full flex">{lineGroup}</div>)
-    lineGroup = [];
-    group = 0;
-  })
-
+    }) 
+  }
   return htmlTransform;
 }
 
@@ -176,7 +142,7 @@ export default function Home() {
             />
             <div id="text_display" className="text_display flex flex-wrap w-full text-white
               break-normal text-2xl px-12 py-2 tracking-tight font-extralight
-              ">
+              whitespace-pre">
               <TestCode />
             </div>
             <div id="text_display" className="text_display flex flex-wrap w-full text-white
