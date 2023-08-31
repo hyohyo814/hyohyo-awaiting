@@ -167,14 +167,13 @@ export default function Home() {
             lineGroup.push(<span>{inputChar}</span>);
             break;
           case /\(|\)|\{|\}/g.test(inputChar):
-            if (inputGroup > 0) {
-              inputGroup++;
-            }
+            inputGroup++;
             strCount = 0;
 
             if (/\{/g.test(inputChar)) {
               indentDepth++;
             } else if (/\}/g.test(inputChar)) {
+              inputGroup--;
               indentDepth--;
               lineGroup.shift();
             }
