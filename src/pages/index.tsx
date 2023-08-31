@@ -124,38 +124,38 @@ export default function Home() {
   const { user, isSignedIn, isLoaded } = useUser();
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
 
-
   interface WordChunk {
     [key: string]: string[] 
   }
 
-  interface LineChunk {
-    [key: string]: string[]
-  }
-  
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
     const target = e.target as HTMLInputElement;
     const lineSplit = target.value.split("\n");
-    let inputLine = 0;
     let strCount = 0;
-    let extraCount = 0;
+    let indentDepth = 0;
     let inputGroup = 0;
     const wordGroup: WordChunk = {};
     let lineGroup: React.JSX.Element[] = [];
     const result: React.JSX.Element[] = []; 
 
     lineSplit.forEach((line, lineIdx) => {
+      inputGroup = 0;
       const inputSplit = line.split("");
-
-      inputSplit.forEach((inputChar, charIdx) => {
-        function focusDiv(group: number){ return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)};
-        if (!focusDiv) {
-          return;
+      if (indentDepth > 0) {
+        for (let i = 0; i < indentDepth; i++) {
+          lineGroup.push(<div className="inline-flex mx-4" />);
         }
+      }
+
+      inputSplit.forEach(inputChar => {
+        function focusDiv(group: number){ return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)};
+        if (!focusDiv) return;
+
         if (!wordGroup[inputGroup]) {
           wordGroup[inputGroup] = [];
         }
+
 
         switch(true) {
           case /\s/g.test(inputChar): 
@@ -167,8 +167,15 @@ export default function Home() {
             break;
           case /\(|\)|\{|\}/g.test(inputChar):
             inputGroup++;
-            console.log(focusDiv(inputGroup))
             strCount = 0;
+
+            if (/\{/g.test(inputChar)) {
+              indentDepth++;
+            } else if (/\}/g.test(inputChar)) {
+              indentDepth--;
+              lineGroup.shift();
+            }
+
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
               lineGroup.push(<span className="text-green-500">{inputChar}</span>);
               inputGroup++;
@@ -183,6 +190,7 @@ export default function Home() {
             lineGroup.push(<span className="text-green-500">{inputChar}</span>);
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
+            console.log(focusDiv(inputGroup))
             wordGroup[inputGroup]!.push(inputChar);
             strCount++;
             lineGroup.push(<span className="text-rose-500">{inputChar}</span>);
@@ -226,8 +234,8 @@ export default function Home() {
               <TestCode />
             </div>
             <div id="text_display" className="text_display flex flex-wrap w-full text-white
-              break-normal text-4xl px-12 py-2 tracking-tight font-light
-              ">
+              break-normal text-2xl px-12 py-2 tracking-tight font-light
+              font-mono">
               {outputArr}
             </div>
           </div>
