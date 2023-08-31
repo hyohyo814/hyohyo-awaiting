@@ -141,6 +141,7 @@ export default function Home() {
 
     lineSplit.forEach((line, lineIdx) => {
       inputGroup = 0;
+      console.log(lineIdx, inputGroup)
       const inputSplit = line.split("");
       if (indentDepth > 0) {
         for (let i = 0; i < indentDepth; i++) {
@@ -166,7 +167,9 @@ export default function Home() {
             lineGroup.push(<span>{inputChar}</span>);
             break;
           case /\(|\)|\{|\}/g.test(inputChar):
-            inputGroup++;
+            if (inputGroup > 0) {
+              inputGroup++;
+            }
             strCount = 0;
 
             if (/\{/g.test(inputChar)) {
@@ -180,7 +183,9 @@ export default function Home() {
               lineGroup.push(<span className="text-green-500">{inputChar}</span>);
               inputGroup++;
             } else {
-              lineGroup.push(<span className="text-rose-500">{inputChar}</span>);
+              console.log(inputGroup)
+              console.log(focusDiv(inputGroup));
+              lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}`} className="text-rose-500">{inputChar}</span>);
             }
             
             break;
