@@ -112,7 +112,7 @@ function TestCode() {
 
     })
      
-    htmlTransform.push(<div key={`line${line}`} id={`line${line}`} className="w-full flex">{lineGroup}</div>)
+    htmlTransform.push(<div key={`line${line}`} id={`line${line}`} className="w-full flex">{lineGroup}</div>);
     lineGroup = [];
     group = 0;
   })
@@ -128,50 +128,66 @@ export default function Home() {
     [key: string]: string[] 
   }
 
+  interface LineChunk {
+    [key: string]: string[]
+  }
+  
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
     const target = e.target as HTMLInputElement;
-    const inputSplit = target.value.split("");
-    let inputGroup = 0;
+    const lineSplit = target.value.split("\n");
+    let inputLine = 0;
     let strCount = 0;
     let extraCount = 0;
     const wordGroup: WordChunk = {};
-    const result: React.JSX.Element[] = [];
+    let lineGroup: React.JSX.Element[] = [];;
+    const result: React.JSX.Element[] = []; 
+    let inputGroup = 0;
 
-    inputSplit.forEach((el, idx) => {
-      if (!wordGroup[inputGroup]) {
-        wordGroup[inputGroup] = [];
-      }
+    lineSplit.forEach((line, lineIdx) => {
+      const inputSplit = line.split("");
 
-      let displayChars = document.querySelectorAll(`[id='line/${inputGroup}']`);
-      const focus = displayChars[strCount] as HTMLSpanElement;
+      inputSplit.forEach((inputChar, charIdx) => {
+        let focusDiv = document.querySelector(`[id='line${lineIdx}/group${inputGroup}']`)?.children;
+        if (!focusDiv) {
+          return;
+        }
 
-      switch(true) {
-        case el === " ":
-          if (strCount !== 0) {
+        switch(true) {
+          case inputChar === " ":
+            strCount = 0;
+            inputGroup++;
+            lineGroup.push(<span>{inputChar}</span>);
+            break;
+          case /\(|\)/g.test(inputChar):
             inputGroup++;
             strCount = 0;
-            extraCount = 0;
-            result.push(<span key={idx} className="m-1">{el}</span>);
+            if (inputChar === (focusDiv[strCount] as HTMLSpanElement)?.innerText) {
+              lineGroup.push(<span className="text-green-500">{inputChar}</span>);
+              inputGroup++;
+              break;
+            } else {
+              lineGroup.push(<span className="text-green-500">{inputChar}</span>);
+              inputGroup++;
+              break;
+            }
+          case inputChar === (focusDiv[strCount] as HTMLSpanElement)?.innerText:
+            strCount++;
+            lineGroup.push(<span className="text-green-500">{inputChar}</span>);
             break;
-          } else {
+          case inputChar !== (focusDiv[strCount] as HTMLSpanElement)?.innerText: 
+            strCount++;
+            lineGroup.push(<span className="text-rose-500">{inputChar}</span>);
             break;
-          }
-        case el === focus?.innerText:
-          result.push(<span key={idx} className="text-green-500">{el}</span>);
-          wordGroup[inputGroup]!.push(el);
-          strCount++;
-          break;
-        case el !==focus?.innerText:
-          result.push(<span key={idx} className="text-rose-500">{el}</span>);
-          wordGroup[inputGroup]!.push(el);
-          strCount++;
-          break;
-        default:
-          break;
-      }
+          default:
+            break;
+        }
+      });
+
+      const tmp = lineGroup.flat();
+      lineGroup = [];
+      result.push(<div className="w-full">{tmp}</div>);
     })
-      
     setOutputArr(result);
   }
 
@@ -192,7 +208,7 @@ export default function Home() {
       {!!isSignedIn &&
         <>
           <div className="flex flex-col bg-slate-900 w-[64rem] h-[40rem]">
-            <input
+            <textarea
               id="input_display"
               className="w-full text-white break-normal text-4xl bg-slate-800 z-50 px-12 p-1
               font-light tracking-tight"
