@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 import { api } from "~/utils/api";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function TestCode() {
   const codeSample1 = [
@@ -124,6 +124,7 @@ export default function Home() {
   const { user, isSignedIn, isLoaded } = useUser();
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
 
+
   interface WordChunk {
     [key: string]: string[] 
   }
@@ -139,47 +140,52 @@ export default function Home() {
     let inputLine = 0;
     let strCount = 0;
     let extraCount = 0;
-    const wordGroup: WordChunk = {};
-    let lineGroup: React.JSX.Element[] = [];;
-    const result: React.JSX.Element[] = []; 
     let inputGroup = 0;
+    const wordGroup: WordChunk = {};
+    let lineGroup: React.JSX.Element[] = [];
+    const result: React.JSX.Element[] = []; 
 
     lineSplit.forEach((line, lineIdx) => {
       const inputSplit = line.split("");
 
       inputSplit.forEach((inputChar, charIdx) => {
-        let focusDiv = document.querySelector(`[id='line${lineIdx}/group${inputGroup}']`)?.children;
+        function focusDiv(group: number){ return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)};
         if (!focusDiv) {
           return;
         }
+        if (!wordGroup[inputGroup]) {
+          wordGroup[inputGroup] = [];
+        }
 
         switch(true) {
-          case inputChar === " ":
+          case /\s/g.test(inputChar): 
             strCount = 0;
-            inputGroup++;
+            if (wordGroup[inputGroup]!.length > 0) {
+              inputGroup++;
+            }
             lineGroup.push(<span>{inputChar}</span>);
             break;
-          case /\(|\)/g.test(inputChar):
+          case /\(|\)|\{|\}/g.test(inputChar):
             inputGroup++;
+            console.log(focusDiv(inputGroup))
             strCount = 0;
-            if (inputChar === (focusDiv[strCount] as HTMLSpanElement)?.innerText) {
+            if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
               lineGroup.push(<span className="text-green-500">{inputChar}</span>);
               inputGroup++;
-              break;
             } else {
-              lineGroup.push(<span className="text-green-500">{inputChar}</span>);
-              inputGroup++;
-              break;
+              lineGroup.push(<span className="text-rose-500">{inputChar}</span>);
             }
-          case inputChar === (focusDiv[strCount] as HTMLSpanElement)?.innerText:
+            
+            break;
+          case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
+            wordGroup[inputGroup]!.push(inputChar);
             strCount++;
             lineGroup.push(<span className="text-green-500">{inputChar}</span>);
             break;
-          case inputChar !== (focusDiv[strCount] as HTMLSpanElement)?.innerText: 
+          case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
+            wordGroup[inputGroup]!.push(inputChar);
             strCount++;
             lineGroup.push(<span className="text-rose-500">{inputChar}</span>);
-            break;
-          default:
             break;
         }
       });
