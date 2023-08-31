@@ -14,10 +14,33 @@ function TestCode() {
     "var total: number = sum(10,20);",
     "var str: string = sum(10,20);"
   ]
+
+  const codeSample2 = [
+    "function foo(bar)",
+    "{",
+    "for (let i = 0; i < fizz; i++) {",
+    "buzz++",
+    "}",
+    "}",
+    "return something",
+  ]
+
+  const codeSample3 = [
+    "function foo(bar) {",
+    "function foo2(bar2) {",
+    "function foo3(bar3) {",
+    "for (const fizz of buzz) {",
+    "fizz.doSomething();",
+    "}",
+    "}",
+    "}",
+    "}",
+  ]
+
   const codeParse: string[][] = [];
   
   // string for code sample
-  for (const line of codeSample1) {
+  for (const line of codeSample3) {
     const split = line.split("");
     codeParse.push(split);
   }
@@ -26,10 +49,18 @@ function TestCode() {
   let divGroup: React.JSX.Element[] = [];
   let lineGroup: React.JSX.Element[] = [];
   const htmlTransform: React.JSX.Element[] = [];
+  
+  let indentDepth = 0;
 
   codeParse.forEach((spread, line) => {
     let strCount = 0;
     spread.forEach((el, idx) => {
+      if (divGroup.length === 0 && group === 0) {
+        for (let i = 0; i < indentDepth; i++) {
+          lineGroup.push(<div id={`line${line}/indent${idx}`} key={`line${line}/indent${i}`} className="mx-3"/>);
+        }
+      }
+
       switch(true) {
         case el === " ":
           lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="mr-2">{divGroup}</div>);
@@ -54,6 +85,20 @@ function TestCode() {
             group++;
           }
           break;
+        case /\{|\}/g.test(el):
+          if (/\{/g.test(el)) {
+            indentDepth++; 
+            divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="">{divGroup}</div>);
+            divGroup = [];
+          } else if (/\}/g.test(el)) {
+            lineGroup.shift();
+            divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="">{divGroup}</div>);
+            divGroup = [];
+            indentDepth--; 
+          }
+          break;
         default:
           divGroup.push(<span key={`line${line}/group${group}/char${strCount}`} id={`line${line}/group${group}/char${strCount}`}>{el}</span>);
           strCount++;
@@ -74,27 +119,6 @@ function TestCode() {
 
   return htmlTransform;
 }
-
-function TestMap() {
-  // string for simple text
-  const test = "Did you know that the critically acclaimed MMORPG Final Fantasy XIV has a free trial, and includes the entirety of A Realm Reborn AND the award-winning Heavensward and Stormblood expansions up to level 70 with n restrictions on playtime? Sign up, and enjoy Eorzea today!"
-  const testArr = test.split("");
-  let group = 0;
-  let divGroup: React.JSX.Element[] = [];
-  const result: React.JSX.Element[] = [];
-  testArr.forEach((el, idx) => {
-    if (el === " ") {
-      result.push(<div key={`group_display/${group}`} id={`word_group/${group}`} className="">{divGroup}</div>);
-      group++;
-      divGroup = [];
-    } else {
-      divGroup.push(<span id={`group/${group}`} key={`display/${idx}`} className="display_char font-mono">{el}</span>);
-    }
-  });
-
-  return result;
-}
-
 
 export default function Home() {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -119,7 +143,7 @@ export default function Home() {
         wordGroup[inputGroup] = [];
       }
 
-      let displayChars = document.querySelectorAll(`[id='group/${inputGroup}']`);
+      let displayChars = document.querySelectorAll(`[id='line/${inputGroup}']`);
       const focus = displayChars[strCount] as HTMLSpanElement;
 
       switch(true) {
