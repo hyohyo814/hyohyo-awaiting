@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"; 
 
 interface WordChunk {
   [key: string]: string[] 
@@ -24,6 +24,15 @@ export default function InputDisplay() {
       if (indentDepth > 0) {
         for (let i = 0; i < indentDepth; i++) {
           lineGroup.push(<div key={`line${lineIdx}/spacer${i}`} className="inline-flex mx-4" />);
+        }
+      }
+
+      for (let i = 0; i <= result.length; i++) {
+        const lineEl = document.querySelector(`[id='lineGroup${i}']`);
+        if (i === lineIdx) {
+          lineEl?.setAttribute("class", "w-full h-7 bg-slate-500/50");
+        } else {
+          lineEl?.setAttribute("class", "w-full h-7");
         }
       }
 
@@ -79,7 +88,7 @@ export default function InputDisplay() {
       });
       const tmp = lineGroup.flat();
       lineGroup = [];
-      result.push(<div key={`lineGroup${lineIdx}`} className="w-full h-7">{tmp}</div>);
+      result.push(<div id={`lineGroup${lineIdx}`} key={`lineGroup${lineIdx}`} className="w-full h-7">{tmp}</div>);
     })
     setOutputArr(result);
   };
@@ -89,11 +98,15 @@ export default function InputDisplay() {
       <textarea
         id="input_display"
         key="input_display"
+        spellCheck="false"
+        autoComplete="off"
         className="w-1/2 text-white break-normal text-xl bg-transparent z-50 px-12 py-2
-        font-light font-mono tracking-tight absolute left-1/2 text-transparent caret-white
+        font-light font-mono tracking-tight absolute left-1/2 text-transparent
         h-full resize-none"
         onChange={typingHandle} />
-      <div id="text_input_display" className="text_display flex flex-col w-1/2 text-white
+      <div
+        id="text_input_display"
+        className="text_display flex flex-col w-1/2 text-white
         break-normal text-xl px-12 py-2 tracking-tight font-light
         font-mono bg-slate-800">
         {outputArr}
