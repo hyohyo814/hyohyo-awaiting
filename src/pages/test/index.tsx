@@ -7,7 +7,7 @@ import CodeDisplay from "~/components/codedisplay";
 import InputDisplay from "~/components/inputdisplay";
 import { codeSample3 } from "~/localdb/test";
 
-export default function Home() {
+export default function Test() {
   const { user, isSignedIn, isLoaded } = useUser();
 
   return (
@@ -26,15 +26,20 @@ export default function Home() {
         </>}
       {!!isSignedIn &&
         <>
-          <div className="flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] justify-center items-center">
-            <Link
-              href="/test"
-              className="flex w-64 flex-col gap-12 text-white text-3xl font-light items-center">
-              Start
-            </Link>
+          <div className="relative flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] shadow-xl rounded-xl">
+            <div key="text_prompt_display" id="text_display" className="text_display flex flex-col w-1/2 text-white
+              text-xl px-12 py-2 tracking-tight font-extralight
+              font-mono">
+              <CodeDisplay codeBlock={codeSample3} />
+            </div>
+            <InputDisplay />
+          </div>
+          <div className="flex w-full h-16 bg-slate-800 rounded-full shadow-xl items-center px-12">
+            <Link href="/" className="bg-orange-400 px-10 py-2 rounded-full">Home</Link>
           </div>
         </>
       }
     </PageLayout>
   );
 }
+
