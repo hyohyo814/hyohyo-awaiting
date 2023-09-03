@@ -1,16 +1,13 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
-import Head from "next/head";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { PageLayout } from "~/components/layout";
-import { api } from "~/utils/api";
 import CodeDisplay from "~/components/codedisplay";
 import InputDisplay from "~/components/inputdisplay";
-import { codeSample3, codeSampleShort } from "~/localdb/test";
-import { useEffect, useRef, useState } from "react";
-import { argv0 } from "process";
+import { codeSampleShort } from "~/localdb/test";
+import { useRef } from "react";
 
 export default function Test() {
-  const { user, isSignedIn, isLoaded } = useUser();
+  const { isSignedIn } = useUser();
   const timerEl = useRef(null);
 
   return (

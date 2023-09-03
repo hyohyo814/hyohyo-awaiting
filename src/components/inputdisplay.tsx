@@ -1,9 +1,14 @@
-import { useState } from "react"; 
+import { useEffect, useRef, useState } from "react"; 
 
 export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObject<null>}) {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
-  const [complete, setComplete] = useState(false);
+  const [complete, setComplete] = useState<Boolean>(false);
+  const [inProgress, setInProgress] = useState<Boolean>(false);
+  const inputRef = useRef(null);
+  const renderCount = useRef(0);
   let start: number;
+
+  useEffect(() => {renderCount.current += 1});
 
   function timer() {
     if (!timerRef.current || complete === true) return;
@@ -12,11 +17,9 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
     refElement.innerText = "0";
 
     start = new Date().getSeconds();
-    const timerInterval = setInterval(() => {
+    return setInterval(() => {
         refElement.innerText = String(timerInc());
     }, 1000);
-
-    timerInc() >= 30 && clearInterval(timerInterval); 
   }
 
   function timerInc() {
@@ -57,6 +60,7 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
 
       if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
         setComplete(true);
+        clearInterval(timer());
       }
       let prev = "";
       inputSplit.forEach((inputChar, charIdx) => {
@@ -128,10 +132,11 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
       {complete === false && <>
         <textarea
           id="input_display"
+          ref={inputRef}
           key="input_display"
           spellCheck="false"
           autoComplete="off"
-          className="w-1/2 text-white break-normal text-xl bg-transparent z-50 px-12 py-2
+          className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
           font-light font-mono tracking-tight absolute left-1/2
           h-full resize-none text-transparent text-opacity-0"
           onChange={typingHandle} />
@@ -139,9 +144,22 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
           id="text_input_display"
           className="text_display flex flex-col w-1/2 text-white
           break-normal text-xl px-12 py-2 tracking-tight font-light
-          font-mono bg-slate-800 whitespace-pre">
+          font-mono bg-slate-800 whitespace-pre relative">
           {outputArr}
         </div>
+        <button
+          onClick={e => {
+            e.preventDefault();
+            if (!inputRef || !inputRef.current) return;
+            const inputEl = inputRef.current as HTMLInputElement;
+            inputEl.focus();
+            timer();
+          }}
+          className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
+          top-1/2">
+          Start
+        </button>
+        <div className="absolute top-2/3">RenderCount: {renderCount.current}</div>
       </>}
       {complete === true && <>
         <div
