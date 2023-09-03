@@ -11,7 +11,6 @@ import { argv0 } from "process";
 
 export default function Test() {
   const { user, isSignedIn, isLoaded } = useUser();
-  const timer = useRef(0);
   const timerEl = useRef(null);
 
   return (
