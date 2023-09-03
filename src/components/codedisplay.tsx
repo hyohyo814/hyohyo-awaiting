@@ -23,7 +23,7 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
       }
 
       switch(true) {
-        case el === " ":
+        case /\s/g.test(el):
           lineGroup.push(<div key={`line${line}/group${group}`} id={`line${line}/group${group}`} className="mr-2">{divGroup}</div>);
           divGroup = [];
           group++;

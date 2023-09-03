@@ -1,8 +1,30 @@
 import { useState } from "react"; 
 
-export default function InputDisplay() {
+export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObject<null>}) {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
+  const [complete, setComplete] = useState(false);
+  let start: number;
 
+  function timer() {
+    if (!timerRef.current) {
+      return;
+    }
+
+    const refElement = timerRef.current as HTMLDivElement;
+    refElement.innerText = "0";
+
+    start = new Date().getSeconds();
+    const timerInterval = setInterval(() => {
+        refElement.innerText = String(timerInc());
+    }, 1000);
+    timerInterval;
+  }
+
+  function timerInc() {
+    return new Date().getSeconds() - start;
+  }
+
+  timer();
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
     const target = e.target as HTMLInputElement;
@@ -14,12 +36,18 @@ export default function InputDisplay() {
     let lineGroup: React.JSX.Element[] = [];
     const result: React.JSX.Element[] = []; 
 
+    const targetDiv = document.querySelector(`[id='text_display']`);
+    const lineDivs = Array.from(targetDiv!.querySelectorAll('div')).filter(node => node.parentNode === targetDiv);
+    const lastLineCont = lineDivs[lineDivs.length - 1]?.querySelectorAll("span");
+    const inputDiv = document.querySelectorAll(`[id='text_input_display'] span`);
+
     lineSplit.forEach((line, lineIdx) => {
       inputGroup = 0;
+      strCount = 0;
       const inputSplit = line.split("");
       if (indentDepth > 0) {
         for (let i = 0; i < indentDepth; i++) {
-          lineGroup.push(<div key={`line${lineIdx}/group${inputGroup}/char${strCount}`} className="inline-flex mx-4" />);
+          lineGroup.push(<div key={`line${lineIdx}/group${inputGroup}/char${strCount}/indent${i}`} className="inline-flex mx-4" />);
         }
       }
 
@@ -30,6 +58,9 @@ export default function InputDisplay() {
           : lineEl?.setAttribute("class", "flex h-7")
       }
 
+      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
+        console.log("complete")
+      }
       let prev = "";
       inputSplit.forEach((inputChar, charIdx) => {
         let curr = inputChar;
@@ -40,10 +71,10 @@ export default function InputDisplay() {
 
         switch(true) {
           case /\s/g.test(inputChar): 
-            if (!/\s/g.test(prev)) {
+            if (!/\s/g.test(prev) && !/\(/g.test(prev)) {
               strCount = 0;
               inputGroup++;
-              lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`} key={`line${lineIdx}/group${inputGroup}/char${strCount}`}>{inputChar}</span>);
+              lineGroup.push(<div id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`} key={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`} className="mr-2" />);
               strCount = 0;
               break;
             } else {
@@ -59,8 +90,10 @@ export default function InputDisplay() {
               indentDepth++;
             } else if (/\}/g.test(inputChar)) {
               inputGroup--;
-              indentDepth--;
-              lineGroup.shift();
+              if (indentDepth > 0) {
+                indentDepth--;
+                lineGroup.shift();
+              }
             }
 
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
