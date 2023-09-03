@@ -6,9 +6,7 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
   let start: number;
 
   function timer() {
-    if (!timerRef.current) {
-      return;
-    }
+    if (!timerRef.current || complete === true) return;
 
     const refElement = timerRef.current as HTMLDivElement;
     refElement.innerText = "0";
@@ -17,14 +15,14 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
     const timerInterval = setInterval(() => {
         refElement.innerText = String(timerInc());
     }, 1000);
-    timerInterval;
+
+    timerInc() >= 30 && clearInterval(timerInterval); 
   }
 
   function timerInc() {
     return new Date().getSeconds() - start;
   }
 
-  timer();
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
     const target = e.target as HTMLInputElement;
@@ -39,7 +37,6 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
     const targetDiv = document.querySelector(`[id='text_display']`);
     const lineDivs = Array.from(targetDiv!.querySelectorAll('div')).filter(node => node.parentNode === targetDiv);
     const lastLineCont = lineDivs[lineDivs.length - 1]?.querySelectorAll("span");
-    const inputDiv = document.querySelectorAll(`[id='text_input_display'] span`);
 
     lineSplit.forEach((line, lineIdx) => {
       inputGroup = 0;
@@ -59,7 +56,7 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
       }
 
       if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
-        console.log("complete")
+        setComplete(true);
       }
       let prev = "";
       inputSplit.forEach((inputChar, charIdx) => {
@@ -128,22 +125,41 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
 
   return (
     <>
-      <textarea
-        id="input_display"
-        key="input_display"
-        spellCheck="false"
-        autoComplete="off"
-        className="w-1/2 text-white break-normal text-xl bg-transparent z-50 px-12 py-2
-        font-light font-mono tracking-tight absolute left-1/2
-        h-full resize-none text-transparent text-opacity-0"
-        onChange={typingHandle} />
-      <div
-        id="text_input_display"
-        className="text_display flex flex-col w-1/2 text-white
-        break-normal text-xl px-12 py-2 tracking-tight font-light
-        font-mono bg-slate-800 whitespace-pre">
-        {outputArr}
-      </div>
+      {complete === false && <>
+        <textarea
+          id="input_display"
+          key="input_display"
+          spellCheck="false"
+          autoComplete="off"
+          className="w-1/2 text-white break-normal text-xl bg-transparent z-50 px-12 py-2
+          font-light font-mono tracking-tight absolute left-1/2
+          h-full resize-none text-transparent text-opacity-0"
+          onChange={typingHandle} />
+        <div
+          id="text_input_display"
+          className="text_display flex flex-col w-1/2 text-white
+          break-normal text-xl px-12 py-2 tracking-tight font-light
+          font-mono bg-slate-800 whitespace-pre">
+          {outputArr}
+        </div>
+      </>}
+      {complete === true && <>
+        <div
+          id="result_display"
+          className="flex flex-col w-1/2 text-white text-2xl
+          justify-center items-center gap-12">
+          <span>Congratulations</span>
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setOutputArr([]);
+              setComplete(false);
+            }}
+            className="h-12 w-40 text-black bg-orange-400 rounded-full">
+            Retry
+          </button>
+        </div>
+      </>}
     </>
   );
 }

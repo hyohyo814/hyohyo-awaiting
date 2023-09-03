@@ -7,6 +7,12 @@ export const codeSample1 = [
   "var str: string = sum(10,20);"
 ]
 
+export const codeSampleShort = [
+  "function sum(a, b) {",
+  "return a + b;",
+  "}",
+]
+
 export const codeSample2 = [
   "function foo(bar)",
   "{",
