@@ -129,6 +129,21 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
 
   return (
     <>
+      {inProgress === false && <>
+        <button
+          onClick={e => {
+            e.preventDefault();
+            if (!inputRef || !inputRef.current) return;
+            const inputEl = inputRef.current as HTMLInputElement;
+            inputEl.focus();
+            setInProgress(true);
+            timer();
+          }}
+          className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
+          top-1/2 left-1/2">
+          Start
+        </button>
+      </>}
       {complete === false && <>
         <textarea
           id="input_display"
@@ -147,19 +162,6 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
           font-mono bg-slate-800 whitespace-pre relative">
           {outputArr}
         </div>
-        <button
-          onClick={e => {
-            e.preventDefault();
-            if (!inputRef || !inputRef.current) return;
-            const inputEl = inputRef.current as HTMLInputElement;
-            inputEl.focus();
-            timer();
-          }}
-          className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
-          top-1/2">
-          Start
-        </button>
-        <div className="absolute top-2/3">RenderCount: {renderCount.current}</div>
       </>}
       {complete === true && <>
         <div
