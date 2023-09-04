@@ -1,14 +1,9 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
-import Head from "next/head";
 import Link from "next/link";
 import { PageLayout } from "~/components/layout";
-import { api } from "~/utils/api";
-import CodeDisplay from "~/components/codedisplay";
-import InputDisplay from "~/components/inputdisplay";
-import { codeSample3 } from "~/localdb/test";
 
 export default function Home() {
-  const { user, isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
 
   return (
     <PageLayout>
@@ -24,7 +19,7 @@ export default function Home() {
             </SignInButton>
           </div>
         </>}
-      {!!isSignedIn &&
+      {!!isLoaded &&
         <>
           <div className="flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] justify-center items-center">
             <Link

@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react"; 
+import React, { useRef, useState } from "react"; 
 import useCountdown from "~/utils/customhooks";
 
 export default function InputDisplay() {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
   const [complete, setComplete] = useState<Boolean>(false);
   const [inProgress, setInProgress] = useState<Boolean>(false);
+  const [incorrCt, setIncorrCt] = useState<number>(0);
   const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
   const timecheck = timerecord();
@@ -14,6 +15,7 @@ export default function InputDisplay() {
     e.preventDefault();
     const target = e.target as HTMLInputElement;
     const lineSplit = target.value.split("\n");
+    let incorrectCount = 0;
     let strCount = 0;
     let indentDepth = 0;
     let inputGroup = 0;
@@ -34,7 +36,9 @@ export default function InputDisplay() {
       // indentation formatting
       if (indentDepth > 0) {
         for (let i = 0; i < indentDepth; i++) {
-          lineGroup.push(<div key={`line${lineIdx}/group${inputGroup}/char${strCount}/indent${i}`} className="inline-flex mx-4" />);
+          lineGroup.push(<div
+            key={`line${lineIdx}/group${inputGroup}/char${strCount}/indent${i}`}
+            className="inline-flex mx-4" />);
         }
       }
 
@@ -56,7 +60,7 @@ export default function InputDisplay() {
 
       // Begin char checking
       let prev = "";
-      inputSplit.forEach((inputChar, charIdx) => {
+      inputSplit.forEach(inputChar => {
         let curr = inputChar;
         function focusDiv(group: number) {
           return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)
@@ -68,7 +72,10 @@ export default function InputDisplay() {
             if (!/\s/g.test(prev) && !/\(/g.test(prev)) {
               strCount = 0;
               inputGroup++;
-              lineGroup.push(<div id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`} key={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`} className="mr-2" />);
+              lineGroup.push(<div
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
+                className="mr-2" />);
               strCount = 0;
               break;
             } else {
@@ -97,6 +104,7 @@ export default function InputDisplay() {
                 className="text-green-500">{inputChar}</span>);
               inputGroup++;
             } else {
+              incorrectCount++;
               lineGroup.push(<span
                 id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
                 key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
@@ -115,6 +123,7 @@ export default function InputDisplay() {
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
             strCount++;
             cacheCount++;
+            incorrectCount++;
             lineGroup.push(<span
               id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
               key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
@@ -129,6 +138,7 @@ export default function InputDisplay() {
       lineGroup = [];
       result.push(<div id={`lineGroup${lineIdx}`} key={`lineGroup${lineIdx}`}>{tmp}</div>);
     })
+    setIncorrCt(incorrectCount);
     setOutputArr(result);
   };
 
@@ -137,6 +147,7 @@ export default function InputDisplay() {
     setOutputArr([]);
     setComplete(false);
     setInProgress(false);
+    setIncorrCt(0);
     timereset();
   }
 
@@ -144,6 +155,7 @@ export default function InputDisplay() {
     e.preventDefault();
     if (!inputRef || !inputRef.current) return;
     const inputEl = inputRef.current as HTMLInputElement;
+    inputEl.hidden = false;
     inputEl.focus();
     setInProgress(true);
     timestart(countdownTime);
@@ -151,70 +163,71 @@ export default function InputDisplay() {
 
 
   if (inProgress === true && complete  === false && timecheck === 0) {
-    return(
-      <>
-        <div className="flex flex-col w-1/2 text-white text-2xl
-          justify-center items-center gap-12">
-          Time Up!
-          <button
-            onClick={resetHandler}
-            className="h-12 w-40 text-black bg-orange-400 rounded-full">
-            Retry
-          </button>
-        </div>
-      </>
-    )
-  }
-
-  return (
-    <>
-      {inProgress === false && <>
+    return (<>
+      <div className="flex flex-col w-1/2 text-white text-2xl
+        justify-center items-center gap-12">
+        Time Up!
         <button
-          onClick={startCycle}
-          className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
-          top-1/2 left-1/2">
-          Start
+          onClick={resetHandler}
+          className="h-12 w-40 text-black bg-orange-400 rounded-full">
+          Retry
         </button>
-      </>}
-      {complete === false && <>
-        <textarea
-          id="input_display"
-          ref={inputRef}
-          key="input_display"
-          spellCheck="false"
-          autoComplete="off"
-          className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
-          font-light font-mono tracking-tight absolute left-1/2 h-2/3
-          overflow-hidden resize-none text-transparent text-opacity-0"
-          onChange={typingHandle} />
-        <div
-          id="text_input_display"
-          className="text_display flex flex-col w-1/2 text-white
-          break-normal text-xl px-12 py-2 tracking-tight font-light
-          font-mono bg-slate-800 whitespace-pre relative h-2/3">
-          {outputArr}
-        </div>
-        <div className="flex flex-col w-full h-1/4 
-          bg-slate-800 bottom-0 self-end">
-          <div>time: {timeleft}</div>
-          <div></div>
-          <div></div>
-        </div>
-      </>}
-      {complete === true && <>
-        <div
-          id="result_display"
-          className="flex flex-col w-1/2 text-white text-2xl
-          justify-center items-center gap-12">
-          <span>Congratulations</span>
+      </div>
+    </>);
+  };
+
+  return (<>
+    {complete === false && <>
+      <textarea
+        hidden={true}
+        id="input_display"
+        ref={inputRef}
+        key="input_display"
+        spellCheck="false"
+        autoComplete="off"
+        className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
+        font-light font-mono tracking-tight absolute left-1/2 h-2/3
+        overflow-hidden resize-none text-transparent text-opacity-0"
+        onChange={typingHandle} />
+      <div
+        id="text_input_display"
+        className="text_display flex flex-col w-1/2 text-white
+        break-normal text-xl px-12 py-2 tracking-tight font-light
+        font-mono bg-slate-800 whitespace-pre relative h-2/3">
+        {outputArr}
+        {inProgress === false && <>
           <button
-            onClick={resetHandler}
-            className="h-12 w-40 text-black bg-orange-400 rounded-full">
-            Retry
+            onClick={startCycle}
+            className="h-12 w-40 font-sans font-light text-black bg-orange-400
+            rounded-full absolute z-50 top-1/2
+            ">
+            Start
           </button>
+        </>}
+      </div>
+      {true && <>
+        <div className="flex flex-col w-full h-1/4 
+          bg-slate-800 bottom-0 self-end px-12 py-4
+          font-light text-2xl text-white">
+          <div className="">time: {timeleft}</div>
+          <div>incorrect: {incorrCt}</div>
+          <div></div>
         </div>
       </>}
-    </>
-  );
+    </>}
+    {complete === true && <>
+      <div
+        id="result_display"
+        className="flex flex-col w-1/2 text-white text-2xl
+        justify-center items-center gap-12">
+        <span>Congratulations</span>
+        <button
+          onClick={resetHandler}
+          className="h-12 w-40 text-black bg-orange-400 rounded-full">
+          Retry
+        </button>
+      </div>
+    </>}
+  </>);
 }
   
