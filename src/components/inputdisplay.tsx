@@ -1,35 +1,14 @@
-import { useEffect, useRef, useState } from "react"; 
-
-function useCountdown() {
-  const [timeleft, setTimeleft] = useState(0);
-
-  useEffect(() => {
-    if (timeleft <= 0) return;
-
-    const timeout = setTimeout(() => {
-      setTimeleft(timeleft - 1);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [timeleft])
-
-  function start(seconds: number) {
-    setTimeleft(seconds);
-  }
-
-  function record() {
-    return timeleft;
-  }
-
-  return { timeleft, start, record };
-}
+import React, { useEffect, useRef, useState } from "react"; 
+import useCountdown from "~/utils/customhooks";
 
 export default function InputDisplay() {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
   const [complete, setComplete] = useState<Boolean>(false);
   const [inProgress, setInProgress] = useState<Boolean>(false);
-  const { timeleft, record, start } = useCountdown();
+  const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
+  const timecheck = timerecord();
+  const countdownTime = 30;
 
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -45,7 +24,6 @@ export default function InputDisplay() {
     // Get DOM elements
     const targetDiv = document.querySelector(`[id='text_display']`);
     const lineDivs = Array.from(targetDiv!.querySelectorAll('div')).filter(node => node.parentNode === targetDiv);
-    const lastLineCont = lineDivs[lineDivs.length - 1]?.querySelectorAll("span");
 
     // Begin input checking
     lineSplit.forEach((line, lineIdx) => {
@@ -69,10 +47,10 @@ export default function InputDisplay() {
       }
 
       // completion check
-      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
+      if (lineIdx === lineDivs.length) {
         console.log("done")
         setComplete(true);
-        const remaining = record();
+        const remaining = timerecord();
         console.log(remaining);
       }
 
@@ -113,22 +91,34 @@ export default function InputDisplay() {
             }
 
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
-              lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}/char${strCount}`} key={`line${lineIdx}/group${inputGroup}/char${strCount}`} className="text-green-500">{inputChar}</span>);
+              lineGroup.push(<span
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                className="text-green-500">{inputChar}</span>);
               inputGroup++;
             } else {
-              lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}/char${strCount}`} key={`line${lineIdx}/group${inputGroup}/char${strCount}`}className="text-rose-500">{inputChar}</span>);
+              lineGroup.push(<span
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                className="text-rose-500">{inputChar}</span>);
             }
             
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
             strCount++;
             cacheCount++;
-            lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}/char${strCount}`} key={`line${lineIdx}/group${inputGroup}/char${strCount}`} className="text-green-500">{inputChar}</span>);
+            lineGroup.push(<span
+              id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+              key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+              className="text-green-500">{inputChar}</span>);
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
             strCount++;
             cacheCount++;
-            lineGroup.push(<span id={`line${lineIdx}/group${inputGroup}/char${strCount}`} key={`line${lineIdx}/group${inputGroup}/char${strCount}`} className="text-rose-500">{inputChar}</span>);
+            lineGroup.push(<span
+              id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+              key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+              className="text-rose-500">{inputChar}</span>);
             break;
           default:
             break;
@@ -142,17 +132,45 @@ export default function InputDisplay() {
     setOutputArr(result);
   };
 
+  function resetHandler(e: React.SyntheticEvent) {
+    e.preventDefault();
+    setOutputArr([]);
+    setComplete(false);
+    setInProgress(false);
+    timereset();
+  }
+
+  function startCycle(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (!inputRef || !inputRef.current) return;
+    const inputEl = inputRef.current as HTMLInputElement;
+    inputEl.focus();
+    setInProgress(true);
+    timestart(countdownTime);
+  } 
+
+
+  if (inProgress === true && complete  === false && timecheck === 0) {
+    return(
+      <>
+        <div className="flex flex-col w-1/2 text-white text-2xl
+          justify-center items-center gap-12">
+          Time Up!
+          <button
+            onClick={resetHandler}
+            className="h-12 w-40 text-black bg-orange-400 rounded-full">
+            Retry
+          </button>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       {inProgress === false && <>
         <button
-          onClick={e => {
-            if (!inputRef || !inputRef.current) return;
-            const inputEl = inputRef.current as HTMLInputElement;
-            inputEl.focus();
-            setInProgress(true);
-            start(30);
-          }}
+          onClick={startCycle}
           className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
           top-1/2 left-1/2">
           Start
@@ -190,11 +208,7 @@ export default function InputDisplay() {
           justify-center items-center gap-12">
           <span>Congratulations</span>
           <button
-            onClick={e => {
-              e.preventDefault();
-              setOutputArr([]);
-              setComplete(false);
-            }}
+            onClick={resetHandler}
             className="h-12 w-40 text-black bg-orange-400 rounded-full">
             Retry
           </button>
@@ -203,4 +217,4 @@ export default function InputDisplay() {
     </>
   );
 }
-
+  
