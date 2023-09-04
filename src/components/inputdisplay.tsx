@@ -17,17 +17,19 @@ function useCountdown() {
     setTimeleft(seconds);
   }
 
-  return { timeleft, start };
+  function record() {
+    return timeleft;
+  }
+
+  return { timeleft, start, record };
 }
 
 export default function InputDisplay() {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
   const [complete, setComplete] = useState<Boolean>(false);
   const [inProgress, setInProgress] = useState<Boolean>(false);
-  const [elapsedTime, setElapsedTime] = useState<number>(30);
-  const { timeleft, start } = useCountdown();
+  const { timeleft, record, start } = useCountdown();
   const inputRef = useRef(null);
-  let timerInterval: NodeJS.Timer;
 
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -67,9 +69,11 @@ export default function InputDisplay() {
       }
 
       // completion check
-      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length || elapsedTime >= 30) {
+      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
         console.log("done")
         setComplete(true);
+        const remaining = record();
+        console.log(remaining);
       }
 
       // Begin char checking
