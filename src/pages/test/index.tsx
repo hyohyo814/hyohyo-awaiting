@@ -4,9 +4,11 @@ import { PageLayout } from "~/components/layout";
 import CodeDisplay from "~/components/codedisplay";
 import InputDisplay from "~/components/inputdisplay";
 import { codeSampleShort } from "~/localdb/test";
+import { api } from "~/utils/api";
 
 export default function Test() {
   const { isSignedIn } = useUser();
+  const { data: codeBlock, isLoading } = api.codes.getCodes.useQuery();
 
   return (
     <PageLayout>
@@ -19,7 +21,7 @@ export default function Test() {
               className="text_display flex flex-col w-1/2 text-white
               text-xl px-12 py-12 tracking-tight font-extralight
               font-mono">
-              <CodeDisplay codeBlock={codeSampleShort} />
+              <CodeDisplay codeBlock={codeBlock!} />
             </div>
             <InputDisplay />
           </div>
