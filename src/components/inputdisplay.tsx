@@ -6,6 +6,7 @@ export default function InputDisplay() {
   const [complete, setComplete] = useState<boolean>(false);
   const [inProgress, setInProgress] = useState<boolean>(false);
   const [incorrCt, setIncorrCt] = useState<number>(0);
+  const [userRecord, setUserRecord] = useState<number>(0);
   const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
   const timecheck = timerecord();
@@ -54,7 +55,7 @@ export default function InputDisplay() {
         console.log("done")
         setComplete(true);
         const remaining = timerecord();
-        console.log(remaining);
+        setUserRecord(remaining);
       }
 
       // Begin char checking
@@ -202,13 +203,13 @@ export default function InputDisplay() {
           </button>
         </>}
       </div>
-      {true && <>
+      {inProgress === true && <>
         <div className="flex flex-col w-full h-1/4 
-          bg-slate-800 bottom-0 self-end px-12 py-4
-          font-light text-2xl text-white">
-          <div className="">time: {timeleft}</div>
+          bg-black bottom-0 self-end px-36 py-10
+          font-light text-2xl text-white rounded-xl
+          border border-orange-200">
+          <div className="">time remaining: {timeleft}</div>
           <div>incorrect: {incorrCt}</div>
-          <div></div>
         </div>
       </>}
     </>}
@@ -218,6 +219,7 @@ export default function InputDisplay() {
         className="flex flex-col w-1/2 text-white text-2xl
         justify-center items-center gap-12">
         <span>Congratulations</span>
+        <span className="font-light">You completed it with {userRecord} s reamining!</span>
         <button
           onClick={resetHandler}
           className="h-12 w-40 text-black bg-orange-400 rounded-full">

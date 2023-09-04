@@ -19,7 +19,7 @@ export default function Home() {
             </SignInButton>
           </div>
         </>}
-      {!!isLoaded &&
+      {!!isSignedIn &&
         <>
           <div className="flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] justify-center items-center">
             <Link

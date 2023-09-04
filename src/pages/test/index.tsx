@@ -13,8 +13,11 @@ export default function Test() {
       {!!isSignedIn &&
         <>
           <div className="relative flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] shadow-xl rounded-xl">
-            <div key="text_prompt_display" id="text_display" className="text_display flex flex-col w-1/2 text-white
-              text-xl px-12 py-2 tracking-tight font-extralight
+            <div
+              key="text_prompt_display"
+              id="text_display"
+              className="text_display flex flex-col w-1/2 text-white
+              text-xl px-12 py-12 tracking-tight font-extralight
               font-mono">
               <CodeDisplay codeBlock={codeSampleShort} />
             </div>
