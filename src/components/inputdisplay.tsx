@@ -1,30 +1,33 @@
 import { useEffect, useRef, useState } from "react"; 
 
-export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObject<null>}) {
+function useCountdown() {
+  const [timeleft, setTimeleft] = useState(0);
+
+  useEffect(() => {
+    if (timeleft <= 0) return;
+
+    const timeout = setTimeout(() => {
+      setTimeleft(timeleft - 1);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [timeleft])
+
+  function start(seconds: number) {
+    setTimeleft(seconds);
+  }
+
+  return { timeleft, start };
+}
+
+export default function InputDisplay() {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
   const [complete, setComplete] = useState<Boolean>(false);
   const [inProgress, setInProgress] = useState<Boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(30);
+  const { timeleft, start } = useCountdown();
   const inputRef = useRef(null);
-  const renderCount = useRef(0);
-  let start: number;
-
-  useEffect(() => {renderCount.current += 1});
-
-  function timer() {
-    if (!timerRef.current || complete === true) return;
-
-    const refElement = timerRef.current as HTMLDivElement;
-    refElement.innerText = "0";
-
-    start = new Date().getSeconds();
-    return setInterval(() => {
-        refElement.innerText = String(timerInc());
-    }, 1000);
-  }
-
-  function timerInc() {
-    return new Date().getSeconds() - start;
-  }
+  let timerInterval: NodeJS.Timer;
 
   function typingHandle(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -37,20 +40,25 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
     let lineGroup: React.JSX.Element[] = [];
     const result: React.JSX.Element[] = []; 
 
+    // Get DOM elements
     const targetDiv = document.querySelector(`[id='text_display']`);
     const lineDivs = Array.from(targetDiv!.querySelectorAll('div')).filter(node => node.parentNode === targetDiv);
     const lastLineCont = lineDivs[lineDivs.length - 1]?.querySelectorAll("span");
 
+    // Begin input checking
     lineSplit.forEach((line, lineIdx) => {
       inputGroup = 0;
       strCount = 0;
       const inputSplit = line.split("");
+
+      // indentation formatting
       if (indentDepth > 0) {
         for (let i = 0; i < indentDepth; i++) {
           lineGroup.push(<div key={`line${lineIdx}/group${inputGroup}/char${strCount}/indent${i}`} className="inline-flex mx-4" />);
         }
       }
 
+      // highlight active line
       for (let i = 0; i <= result.length; i++) {
         const lineEl = document.querySelector(`[id='lineGroup${i}']`);
         i === lineIdx
@@ -58,10 +66,13 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
           : lineEl?.setAttribute("class", "flex h-7")
       }
 
-      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length) {
+      // completion check
+      if (lineIdx === lineDivs.length - 1 && lineGroup.length === lastLineCont?.length || elapsedTime >= 30) {
+        console.log("done")
         setComplete(true);
-        clearInterval(timer());
       }
+
+      // Begin char checking
       let prev = "";
       inputSplit.forEach((inputChar, charIdx) => {
         let curr = inputChar;
@@ -132,12 +143,11 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
       {inProgress === false && <>
         <button
           onClick={e => {
-            e.preventDefault();
             if (!inputRef || !inputRef.current) return;
             const inputEl = inputRef.current as HTMLInputElement;
             inputEl.focus();
             setInProgress(true);
-            timer();
+            start(30);
           }}
           className="h-12 w-40 text-black bg-orange-400 rounded-full absolute z-50
           top-1/2 left-1/2">
@@ -152,15 +162,21 @@ export default function InputDisplay({timerRef}: {timerRef: React.MutableRefObje
           spellCheck="false"
           autoComplete="off"
           className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
-          font-light font-mono tracking-tight absolute left-1/2
-          h-full resize-none text-transparent text-opacity-0"
+          font-light font-mono tracking-tight absolute left-1/2 h-2/3
+          overflow-hidden resize-none text-transparent text-opacity-0"
           onChange={typingHandle} />
         <div
           id="text_input_display"
           className="text_display flex flex-col w-1/2 text-white
           break-normal text-xl px-12 py-2 tracking-tight font-light
-          font-mono bg-slate-800 whitespace-pre relative">
+          font-mono bg-slate-800 whitespace-pre relative h-2/3">
           {outputArr}
+        </div>
+        <div className="flex flex-col w-full h-1/4 
+          bg-slate-800 bottom-0 self-end">
+          <div>time: {timeleft}</div>
+          <div></div>
+          <div></div>
         </div>
       </>}
       {complete === true && <>
