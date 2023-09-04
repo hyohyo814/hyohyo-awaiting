@@ -3,8 +3,8 @@ import useCountdown from "~/utils/customhooks";
 
 export default function InputDisplay() {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
-  const [complete, setComplete] = useState<Boolean>(false);
-  const [inProgress, setInProgress] = useState<Boolean>(false);
+  const [complete, setComplete] = useState<boolean>(false);
+  const [inProgress, setInProgress] = useState<boolean>(false);
   const [incorrCt, setIncorrCt] = useState<number>(0);
   const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
@@ -19,7 +19,6 @@ export default function InputDisplay() {
     let strCount = 0;
     let indentDepth = 0;
     let inputGroup = 0;
-    let cacheCount = 0;
     let lineGroup: React.JSX.Element[] = [];
     const result: React.JSX.Element[] = []; 
 
@@ -61,7 +60,7 @@ export default function InputDisplay() {
       // Begin char checking
       let prev = "";
       inputSplit.forEach(inputChar => {
-        let curr = inputChar;
+        const curr = inputChar;
         function focusDiv(group: number) {
           return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)
         };
@@ -114,7 +113,6 @@ export default function InputDisplay() {
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
             strCount++;
-            cacheCount++;
             lineGroup.push(<span
               id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
               key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
@@ -122,7 +120,6 @@ export default function InputDisplay() {
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
             strCount++;
-            cacheCount++;
             incorrectCount++;
             lineGroup.push(<span
               id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
@@ -153,7 +150,7 @@ export default function InputDisplay() {
 
   function startCycle(e: React.SyntheticEvent) {
     e.preventDefault();
-    if (!inputRef || !inputRef.current) return;
+    if (!inputRef?.current) return;
     const inputEl = inputRef.current as HTMLInputElement;
     inputEl.hidden = false;
     inputEl.focus();
