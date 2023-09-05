@@ -13,8 +13,7 @@ export default function Test() {
 
   return (
     <PageLayout>
-      {!!isSignedIn &&
-        <>
+      {!!isSignedIn && <>
           <div className="relative flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] shadow-xl rounded-xl">
             <div
               key="text_prompt_display"
@@ -23,19 +22,18 @@ export default function Test() {
               text-2xl px-12 py-12 tracking-tight font-extralight
               font-mono">
               <CodeDisplay codeBlock={codeBlock!} />
-              <div className="my-24 whitespace-pre-wrap">
+              <span className="my-24 font-sans font-light whitespace-pre-wrap text-orange-500">
                 NOTE:
                 Press "ENTER" after the last line to complete.
-              </div>
+              </span>
             </div>
             <InputDisplay />
           </div>
           <div className="flex w-full h-16 bg-slate-800 rounded-full shadow-xl items-center px-12">
             <Link href="/" className="bg-orange-400 px-10 py-2 rounded-full">Home</Link>
           </div>
-        </>
-      }
-      </PageLayout>
+        </>}
+    </PageLayout>
   );
 }
 

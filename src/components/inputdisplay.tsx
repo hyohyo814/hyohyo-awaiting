@@ -185,13 +185,15 @@ export default function InputDisplay() {
         autoComplete="off"
         className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
         font-light font-mono tracking-tight absolute left-1/2 h-2/3
-        overflow-hidden resize-none text-transparent text-opacity-0"
+        overflow-hidden resize-none text-transparent text-opacity-0 rounded-xl
+        "
         onChange={typingHandle} />
       <div
         id="text_input_display"
         className="text_display flex flex-col w-1/2 text-white
         break-normal text-xl px-12 py-2 tracking-tight font-light
-        font-mono bg-slate-800 whitespace-pre relative h-2/3">
+        font-mono bg-slate-800 whitespace-pre relative h-2/3 rounded-xl
+        border">
         {outputArr}
         {inProgress === false && <>
           <button
