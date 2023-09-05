@@ -20,7 +20,7 @@ export default function Test() {
               key="text_prompt_display"
               id="text_display"
               className="text_display flex flex-col w-1/2 text-white
-              text-xl px-12 py-12 tracking-tight font-extralight
+              text-2xl px-12 py-12 tracking-tight font-extralight
               font-mono">
               <CodeDisplay codeBlock={codeBlock!} />
               <div className="my-24 whitespace-pre-wrap">
