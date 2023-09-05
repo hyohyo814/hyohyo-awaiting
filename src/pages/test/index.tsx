@@ -24,7 +24,7 @@ export default function Test() {
               <CodeDisplay codeBlock={codeBlock!} />
               <span className="my-24 font-sans font-light whitespace-pre-wrap text-orange-500">
                 NOTE:
-                Press "ENTER" after the last line to complete.
+                Press ENTER after the last line to complete.
               </span>
             </div>
             <InputDisplay />
