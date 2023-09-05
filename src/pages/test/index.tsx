@@ -22,7 +22,7 @@ export default function Test() {
               text-2xl px-12 py-12 tracking-tight font-extralight
               font-mono">
               <CodeDisplay codeBlock={codeBlock!} />
-              <span className="my-24 font-sans font-light whitespace-pre-wrap text-orange-500">
+              <span className="mt-20 font-sans font-light whitespace-pre-wrap text-orange-500">
                 NOTE:
                 Press ENTER after the last line to complete.
               </span>

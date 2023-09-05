@@ -67,15 +67,38 @@ export default function InputDisplay() {
         };
         if (!focusDiv) return;
 
+        function lineAppend(input: string | null, type: string) {
+          switch(type) {
+            case "correct":
+              lineGroup.push(<span
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                className="text-green-500">{input}</span>);
+              break;
+            case "incorrect":
+              incorrectCount++;
+              lineGroup.push(<span
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
+                className="text-rose-500">{input}</span>);
+              break;
+            case "spacer":
+              lineGroup.push(<div
+                id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
+                key={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
+                className="mr-2" />);
+              break;
+            default:
+
+          }
+        }
+
         switch(true) {
           case /\s/g.test(inputChar): 
             if (!/\s/g.test(prev) && !/\(/g.test(prev)) {
               strCount = 0;
               inputGroup++;
-              lineGroup.push(<div
-                id={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
-                key={`line${lineIdx}/group${inputGroup}/char${strCount}/spacer`}
-                className="mr-2" />);
+              lineAppend(null, "spacer");
               strCount = 0;
               break;
             } else {
@@ -98,34 +121,20 @@ export default function InputDisplay() {
             }
 
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
-              lineGroup.push(<span
-                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-                className="text-green-500">{inputChar}</span>);
+              lineAppend(inputChar, "correct");
               inputGroup++;
             } else {
-              incorrectCount++;
-              lineGroup.push(<span
-                id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-                key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-                className="text-rose-500">{inputChar}</span>);
+              lineAppend(inputChar, "incorrect");
             }
             
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
             strCount++;
-            lineGroup.push(<span
-              id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-              key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-              className="text-green-500">{inputChar}</span>);
+            lineAppend(inputChar, "correct");
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
             strCount++;
-            incorrectCount++;
-            lineGroup.push(<span
-              id={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-              key={`line${lineIdx}/group${inputGroup}/char${strCount}`}
-              className="text-rose-500">{inputChar}</span>);
+            lineAppend(inputChar, "incorrect");
             break;
           default:
             break;
@@ -183,7 +192,7 @@ export default function InputDisplay() {
         key="input_display"
         spellCheck="false"
         autoComplete="off"
-        
+        placeholder="Input..." 
         className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
         font-light font-mono tracking-tight absolute left-1/2 h-2/3
         overflow-hidden resize-none text-transparent text-opacity-0 rounded-xl
@@ -196,23 +205,29 @@ export default function InputDisplay() {
         font-mono bg-slate-800 whitespace-pre relative h-2/3 rounded-xl
         border">
         {outputArr}
-        {inProgress === false && <>
+        {inProgress === false && <div className="w-full h-full flex items-center justify-center">
           <button
             onClick={startCycle}
             className="h-12 w-40 font-sans font-light text-black bg-orange-400
-            rounded-full absolute z-50 top-1/2
+            rounded-full z-50
             ">
             Start
           </button>
-        </>}
+        </div>}
       </div>
       {inProgress === true && <>
         <div className="flex flex-col w-full h-1/4 
-          bg-black bottom-0 self-end px-36 py-10
+          bg-black absolute bottom-0 self-end px-36
           font-light text-2xl text-white rounded-xl
+          justify-center items-start
           border border-orange-200">
           <div className="">time remaining: {timeleft}</div>
           <div>incorrect: {incorrCt}</div>
+          <button
+            onClick={resetHandler}
+            className="bg-white text-black w-24 rounded-full py-1 my-2">
+            reset
+          </button>
         </div>
       </>}
     </>}
