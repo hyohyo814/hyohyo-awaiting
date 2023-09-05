@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 
 export default function Home() {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn } = useUser();
 
   return (
     <PageLayout>
