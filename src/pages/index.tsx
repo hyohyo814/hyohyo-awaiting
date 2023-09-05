@@ -15,7 +15,7 @@ export default function Home() {
           <div className="get_started flex flex-col gap-12 text-white text-3xl font-light items-center">
             <p>Test out your ability with code blocks</p>
             <SignInButton>
-              <button className="get_started w-64 h-28 bg-rose-500 rounded-3xl">Get Started</button>
+              <button className="get_started w-64 h-28 bg-rose-500 rounded-3xl">Sign in</button>
             </SignInButton>
             <Link href="/test" className="get_started w-64 h-28 bg-rose-500 rounded-3xl flex items-center justify-center">Guest mode</Link>
           </div>

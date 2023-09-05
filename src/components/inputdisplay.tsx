@@ -9,6 +9,9 @@ export default function InputDisplay() {
   const [userRecord, setUserRecord] = useState<number>(0);
   const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
+
+
+
   const timecheck = timerecord();
   const countdownTime = 30;
 
@@ -26,6 +29,7 @@ export default function InputDisplay() {
     // Get DOM elements
     const targetDiv = document.querySelector(`[id='text_display']`);
     const lineDivs = Array.from(targetDiv!.querySelectorAll('div')).filter(node => node.parentNode === targetDiv);
+    const inputEl = inputRef.current! as HTMLTextAreaElement;
 
     // Begin input checking
     lineSplit.forEach((line, lineIdx) => {
@@ -54,6 +58,7 @@ export default function InputDisplay() {
       if (lineIdx === lineDivs.length) {
         console.log("done")
         setComplete(true);
+        inputEl.hidden = true;
         const remaining = timerecord();
         setUserRecord(remaining);
       }
@@ -151,6 +156,10 @@ export default function InputDisplay() {
 
   function resetHandler(e: React.SyntheticEvent) {
     e.preventDefault();
+    if (!inputRef?.current) return;
+    const inputEl = inputRef.current as HTMLInputElement;
+    inputEl.hidden = true;
+    inputEl.value = "";
     setOutputArr([]);
     setComplete(false);
     setInProgress(false);
@@ -184,7 +193,6 @@ export default function InputDisplay() {
   };
 
   return (<>
-    {complete === false && <>
       <textarea
         hidden={true}
         id="input_display"
@@ -198,6 +206,7 @@ export default function InputDisplay() {
         overflow-hidden resize-none text-transparent text-opacity-0 rounded-xl
         "
         onChange={typingHandle} />
+    {complete === false && <>
       <div
         id="text_input_display"
         className="text_display flex flex-col w-1/2 text-white
