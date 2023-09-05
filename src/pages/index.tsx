@@ -17,16 +17,17 @@ export default function Home() {
             <SignInButton>
               <button className="get_started w-64 h-28 bg-rose-500 rounded-3xl">Get Started</button>
             </SignInButton>
+            <Link href="/test" className="get_started w-64 h-28 bg-rose-500 rounded-3xl flex items-center justify-center">Guest mode</Link>
           </div>
         </>}
       {!!isSignedIn &&
         <>
-          <div className="flex flex-wrap bg-slate-900 w-[64rem] h-[40rem] justify-center items-center">
-            <Link
-              href="/test"
-              className="flex w-64 flex-col gap-12 text-white text-3xl font-light items-center">
-              Start
-            </Link>
+          <h1 className="front_title text-5xl font-semibold tracking-tight text-white sm:text-[5rem]">
+            Speed<span className="text-rose-600">pasta</span>
+          </h1>
+          <div className="get_started flex flex-col gap-12 text-white text-3xl font-light items-center">
+            <p>Test out your ability with code blocks</p>
+            <Link href="/test" className="get_started w-64 h-28 bg-rose-500 rounded-3xl flex items-center justify-center">Begin</Link>
           </div>
         </>
       }

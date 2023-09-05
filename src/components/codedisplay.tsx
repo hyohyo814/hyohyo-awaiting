@@ -1,13 +1,28 @@
 export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
+  let origin = codeBlock;
   const codeParse: string[][] = [];
   let group = 0;
   let indentDepth = 0;
   let divGroup: React.JSX.Element[] = [];
   let lineGroup: React.JSX.Element[] = [];
   const htmlTransform: React.JSX.Element[] = [];
+
+  if (!codeBlock) {
+    origin = [
+      "function isValidJSON(text) {",
+      "try {",
+      "JSON.parse(text);",
+      "return true;",
+      "}",
+      "catch {",
+      "return false;",
+      "}",
+      "}",
+    ]
+  }
   
   // string for code sample
-  for (const line of codeBlock) {
+  for (const line of origin) {
     const split = line.split("");
     codeParse.push(split);
   }
