@@ -183,6 +183,7 @@ export default function InputDisplay() {
         key="input_display"
         spellCheck="false"
         autoComplete="off"
+        
         className="w-1/2 text-white break-normal text-xl bg-transparent z-30 px-12 py-2
         font-light font-mono tracking-tight absolute left-1/2 h-2/3
         overflow-hidden resize-none text-transparent text-opacity-0 rounded-xl
