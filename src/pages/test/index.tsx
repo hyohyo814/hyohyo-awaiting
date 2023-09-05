@@ -3,12 +3,13 @@ import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 import CodeDisplay from "~/components/codedisplay";
 import InputDisplay from "~/components/inputdisplay";
-import { codeSampleShort } from "~/localdb/test";
 import { api } from "~/utils/api";
 
 export default function Test() {
   const { isSignedIn } = useUser();
   const { data: codeBlock, isLoading } = api.codes.getCodes.useQuery();
+
+  if (isLoading) return <div />;
 
   return (
     <PageLayout>
@@ -22,6 +23,10 @@ export default function Test() {
               text-xl px-12 py-12 tracking-tight font-extralight
               font-mono">
               <CodeDisplay codeBlock={codeBlock!} />
+              <div className="my-24 whitespace-pre-wrap">
+                NOTE:
+                Press "ENTER" after the last line to complete.
+              </div>
             </div>
             <InputDisplay />
           </div>
