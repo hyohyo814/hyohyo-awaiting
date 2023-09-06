@@ -68,7 +68,7 @@ export default function InputDisplay() {
       inputSplit.forEach(inputChar => {
         const curr = inputChar;
         function focusDiv(group: number) {
-          return document.querySelectorAll(`[id='line${lineIdx}/group${group}'] span`)
+          return document.querySelectorAll(`[id*='line${lineIdx}/group${group}']`)
         };
         if (!focusDiv) return;
 
@@ -139,6 +139,7 @@ export default function InputDisplay() {
             strCount++;
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
+            console.log(focusDiv(inputGroup))
             lineAppend(inputChar, "incorrect");
             strCount++;
             break;
