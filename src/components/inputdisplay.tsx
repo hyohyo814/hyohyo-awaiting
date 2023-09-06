@@ -94,6 +94,7 @@ export default function InputDisplay() {
                 className="mr-2" />);
               break;
             default:
+              break;
 
           }
         }
@@ -103,7 +104,7 @@ export default function InputDisplay() {
             if (!/\s/g.test(prev) && !/\(/g.test(prev)) {
               strCount = 0;
               inputGroup++;
-              lineAppend(null, "spacer");
+              lineAppend(null, "spacer", inputGroup, strCount);
               strCount = 0;
               break;
             } else {
@@ -126,20 +127,20 @@ export default function InputDisplay() {
             }
 
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
-              lineAppend(inputChar, "correct");
+              lineAppend(inputChar, "correct", inputGroup, strCount);
               inputGroup++;
             } else {
-              lineAppend(inputChar, "incorrect");
+              lineAppend(inputChar, "incorrect", inputGroup, strCount);
             }
             
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
+            lineAppend(inputChar, "correct", inputGroup, strCount);
             strCount++;
-            lineAppend(inputChar, "correct");
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
+            lineAppend(inputChar, "incorrect", inputGroup, strCount);
             strCount++;
-            lineAppend(inputChar, "incorrect");
             break;
           default:
             break;

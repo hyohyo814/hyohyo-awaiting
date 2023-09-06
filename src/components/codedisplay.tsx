@@ -1,33 +1,22 @@
+import { useRef } from "react";
+
 export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
-  let origin = codeBlock;
+  const displayRef = useRef(null);
   const codeParse: string[][] = [];
   let group = 0;
   let indentDepth = 0;
   let divGroup: React.JSX.Element[] = [];
   let lineGroup: React.JSX.Element[] = [];
   const htmlTransform: React.JSX.Element[] = [];
-
-  if (!codeBlock) {
-    origin = [
-      "function isValidJSON(text) {",
-      "try {",
-      "JSON.parse(text);",
-      "return true;",
-      "}",
-      "catch {",
-      "return false;",
-      "}",
-      "}",
-    ]
-  }
   
   // string for code sample
-  for (const line of origin) {
+  for (const line of codeBlock) {
     const split = line.split("");
     codeParse.push(split);
   }
 
   codeParse.forEach((spread, line) => {
+
     let strCount = 0;
     spread.forEach((el, idx) => {
       if (divGroup.length === 0 && group === 0) {
@@ -37,25 +26,6 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
             key={`line${line}/indent${i}`}
             className="mx-3"/>);
         }
-      }
-
-      function lineAppend() {
-        lineGroup.push(
-          <div
-            key={`line${line}/group${group}`}
-            id={`line${line}/group${group}`}
-            className="">
-            {divGroup}
-          </div>);
-      }
-
-      function divAppend() {
-        divGroup.push(
-          <span
-            key={`line${line}/group${group}/char${strCount}`}
-            id={`line${line}/group${group}/char${strCount}`}>
-            {el}
-          </span>); 
       }
 
       switch(true) {
@@ -69,18 +39,31 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
           strCount = 0;
           break;
         case /\(|\)/g.test(el):
-          lineAppend();
+          lineGroup.push(<div
+            key={`line${line}/group${group}`}
+            id={`line${line}/group${group}`}
+            className="">{divGroup}</div>);
           divGroup = [];
           group++;
           strCount = 0;
           if (/\(/g.test(el)) {
-            divAppend();
-            lineAppend();
+            divGroup.push(<span
+              key={`line${line}/group${group}/char${strCount}`}
+              id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div
+              key={`line${line}/group${group}`}
+              id={`line${line}/group${group}`}
+              className="">{divGroup}</div>);
             divGroup = [];
             group++;
           } else if (/\)/g.test(el)) {
-            divAppend();
-            lineAppend();
+            divGroup.push(<span
+              key={`line${line}/group${group}/char${strCount}`}
+              id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div
+              key={`line${line}/group${group}`}
+              id={`line${line}/group${group}`}
+              className="">{divGroup}</div>);
             divGroup = [];
             group++;
           }
@@ -88,28 +71,46 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
         case /\{|\}/g.test(el):
           if (/\{/g.test(el)) {
             indentDepth++; 
-            divAppend();
-            lineAppend();
+            divGroup.push(<span
+              key={`line${line}/group${group}/char${strCount}`}
+              id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div
+              key={`line${line}/group${group}`}
+              id={`line${line}/group${group}`}
+              className="">{divGroup}</div>);
             divGroup = [];
           } else if (/\}/g.test(el)) {
             lineGroup.shift();
-            divAppend();
-            lineAppend();
+            divGroup.push(<span
+              key={`line${line}/group${group}/char${strCount}`}
+              id={`line${line}/group${group}/char${strCount}`}>{el}</span>); 
+            lineGroup.push(<div
+              key={`line${line}/group${group}`}
+              id={`line${line}/group${group}`}
+              className="">{divGroup}</div>);
             divGroup = [];
             indentDepth--; 
           }
           break;
         default:
-          divAppend();
+          divGroup.push(<span
+            key={`line${line}/group${group}/char${strCount}`}
+            id={`line${line}/group${group}/char${strCount}`}>{el}</span>);
           strCount++;
           if (idx === spread.length - 1) {
-            lineAppend();
+            lineGroup.push(<div
+              key={`line${line}/group${group}`}
+              id={`line${line}/group${group}`}>{divGroup}</div>);
             divGroup = [];
             group = 0;
           }
           break;
       }
+
+      const word = divGroup.map(el => el.props.children);
+      console.log(word.join(""))
     })
+     
 
     htmlTransform.push(<div key={`line${line}`} id={`line${line}`} className="w-full h-6 flex">{lineGroup}</div>);
     lineGroup = [];

@@ -27,7 +27,7 @@ export default function Test() {
           key="text_prompt_display"
           id="text_display"
           className="text_display flex flex-col w-1/2 text-white
-          text-2xl px-12 py-12 tracking-tight font-extralight
+          text-2xl px-12 py-6 tracking-tight font-extralight
           font-mono">
           <CodeDisplay codeBlock={codeBlock!} />
           <span className="mt-20 text-lg font-sans font-light whitespace-pre-wrap text-orange-500">
