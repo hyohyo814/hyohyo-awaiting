@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 import CodeDisplay from "~/components/codedisplay";
