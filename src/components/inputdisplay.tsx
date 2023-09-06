@@ -104,7 +104,7 @@ export default function InputDisplay() {
             if (!/\s/g.test(prev) && !/\(/g.test(prev)) {
               strCount = 0;
               inputGroup++;
-              lineAppend(null, "spacer", inputGroup, strCount);
+              lineAppend(null, "spacer");
               strCount = 0;
               break;
             } else {
@@ -127,19 +127,19 @@ export default function InputDisplay() {
             }
 
             if (inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText) {
-              lineAppend(inputChar, "correct", inputGroup, strCount);
+              lineAppend(inputChar, "correct");
               inputGroup++;
             } else {
-              lineAppend(inputChar, "incorrect", inputGroup, strCount);
+              lineAppend(inputChar, "incorrect");
             }
             
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
-            lineAppend(inputChar, "correct", inputGroup, strCount);
+            lineAppend(inputChar, "correct");
             strCount++;
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
-            lineAppend(inputChar, "incorrect", inputGroup, strCount);
+            lineAppend(inputChar, "incorrect");
             strCount++;
             break;
           default:
