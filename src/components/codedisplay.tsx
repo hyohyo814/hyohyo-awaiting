@@ -24,8 +24,7 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
       }
 
       function lineAppend(char: string) {
-        lineGroup.push(
-          <span
+        lineGroup.push(<span
             key={`line${line}/group${group}/char${strCount}`}
             id={`line${line}/group${group}/char${strCount}`}>
             {char}
@@ -72,7 +71,13 @@ export default function CodeDisplay({codeBlock}: {codeBlock: string[]}) {
       }
     })
 
-    htmlTransform.push(<div key={`line${line}`} id={`line${line}`} className="w-full h-6 flex">{lineGroup}</div>);
+    htmlTransform.push(
+      <div
+        key={`line${line}`}
+        id={`line${line}`}
+        className="w-full h-6 flex">
+        {lineGroup}
+      </div>);
     lineGroup = [];
     group = 0;
   });
