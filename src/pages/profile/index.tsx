@@ -32,6 +32,17 @@ export default function Profile() {
           )})}
         </table>}
       </div>
+      <div className="flex w-full h-16 bg-slate-800
+      rounded-full shadow-xl items-center px-12 gap-x-4">
+        <Link href="/" className="bg-orange-400 px-10
+        py-2 rounded-full">
+          Home
+        </Link>
+        <Link href="/test" className="bg-orange-400 px-10
+        py-2 rounded-full">
+          Test 
+        </Link>
+      </div>
     </PageLayout>
   );
 }

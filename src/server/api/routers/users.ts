@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
 import { records, users } from "drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 export const userRouter = createTRPCRouter({
   createUser: privateProcedure.mutation(async ({ ctx }) => {
@@ -38,6 +38,7 @@ export const userRouter = createTRPCRouter({
       where: eq(users.userId, ctx.userId),
       with: {
         records: {
+          orderBy: asc(records.time),
           columns: {
             id: true,
             time: true,
