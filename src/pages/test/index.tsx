@@ -4,7 +4,7 @@ import CodeDisplay from "~/components/codedisplay";
 import InputDisplay from "~/components/inputdisplay";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
 export default function Test() {
@@ -68,8 +68,9 @@ export default function Test() {
         </div>}
         <InputDisplay userRecord={userRecord} setUserRecord={setUserRecord} />
       </div>
-      <div className="flex w-full h-16 bg-slate-800
-      rounded-full shadow-xl items-center px-12 gap-x-4">
+      <div className="flex flex-grow h-16 bg-slate-800
+      rounded-full shadow-xl items-center px-12 gap-x-4
+      justify-center">
         <Link href="/" className="bg-orange-400 px-10
         py-2 rounded-full">
           Home
@@ -86,10 +87,15 @@ export default function Test() {
             Save Record: {userRecord === 0 ? "awaiting" : `${userRecord} s`}
           </button>
         </>}
-        <Link href="/profile" className="bg-orange-400 px-10
+        {!!isSignedIn && <Link href="/profile" className="bg-orange-400 px-10
         py-2 rounded-full">
           Profile 
-        </Link>
+        </Link>}
+        {!!isSignedIn && <SignOutButton>
+          <button className="bg-orange-400 px-10 py-2 rounded-full">
+            Sign Out
+          </button>
+        </SignOutButton>}
       </div>
     </PageLayout>
   );

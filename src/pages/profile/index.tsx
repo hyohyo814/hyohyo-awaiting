@@ -1,4 +1,4 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { PageLayout } from "~/components/layout";
 import { api } from "~/utils/api";
@@ -32,13 +32,13 @@ export default function Profile() {
           )})}
         </table>}
       </div>
-      <div className="flex w-full h-16 bg-slate-800
+      <div className="flex flex-grow h-16 bg-slate-800
       rounded-full shadow-xl items-center px-12 gap-x-4">
         <Link href="/" className="bg-orange-400 px-10
         py-2 rounded-full">
           Home
         </Link>
-        <Link href="/test" className="bg-orange-400 px-10
+        <Link href="/test" className="bg-rose-400 px-10
         py-2 rounded-full">
           Test 
         </Link>
