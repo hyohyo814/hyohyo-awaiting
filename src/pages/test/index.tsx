@@ -9,10 +9,12 @@ import { useState } from "react";
 
 export default function Test() {
   const { data: codeBlock, isLoading } = api.codes.getCodes.useQuery();
-  const { user, isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
   const [userRecord, setUserRecord] = useState<number>(0);
+  const router = useRouter();
   const { mutate } = api.users.saveData.useMutation({
     onSuccess: () => {
+      router.reload();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
@@ -23,7 +25,6 @@ export default function Test() {
       }
     },
   })
-  const router = useRouter();
 
   function saveHandle(e: React.SyntheticEvent) {
     e.preventDefault();
