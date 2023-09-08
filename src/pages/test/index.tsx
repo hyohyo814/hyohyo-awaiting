@@ -5,15 +5,39 @@ import InputDisplay from "~/components/inputdisplay";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useUser } from "@clerk/nextjs";
+import { useState } from "react";
 
 export default function Test() {
   const { data: codeBlock, isLoading } = api.codes.getCodes.useQuery();
   const { user, isSignedIn } = useUser();
+  const [userRecord, setUserRecord] = useState<number>(0);
+  const { mutate } = api.users.saveData.useMutation({
+    onSuccess: () => {
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage?.[0]) {
+        console.error(errorMessage);
+      } else {
+        console.error("error saving data");
+      }
+    },
+  })
   const router = useRouter();
+
+  function saveHandle(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (!!userRecord) {
+      mutate({ time: userRecord });
+    } else {
+      console.error("failed to save data");
+    }
+  }
 
   function handleReload() {
     router.reload();
   }
+
 
   return (
     <PageLayout>
@@ -41,7 +65,7 @@ export default function Test() {
             Press ENTER after the last line to complete.
           </span>
         </div>}
-        <InputDisplay />
+        <InputDisplay userRecord={userRecord} setUserRecord={setUserRecord} />
       </div>
       <div className="flex w-full h-16 bg-slate-800
       rounded-full shadow-xl items-center px-12 gap-x-4">
@@ -55,7 +79,10 @@ export default function Test() {
           Reload
         </button>
         {isSignedIn && <>
-          <button>
+          <button
+          onClick={saveHandle}
+          className="bg-rose-400 px-10 py-2 rounded-full">
+            Save Record: {userRecord === 0 ? "awaiting" : `${userRecord} s`}
           </button>
         </>}
       </div>

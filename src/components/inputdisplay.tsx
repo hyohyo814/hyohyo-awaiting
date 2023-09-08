@@ -2,12 +2,16 @@ import { useRouter } from "next/router";
 import React, { useRef, useState } from "react"; 
 import useCountdown from "~/utils/customhooks";
 
-export default function InputDisplay() {
+interface Props {
+  userRecord: number,
+  setUserRecord: React.Dispatch<number> 
+}
+
+export default function InputDisplay({userRecord, setUserRecord}: Props) {
   const [outputArr, setOutputArr] = useState<React.JSX.Element[]>([]);
   const [complete, setComplete] = useState<boolean>(false);
   const [inProgress, setInProgress] = useState<boolean>(false);
   const [incorrCt, setIncorrCt] = useState<number>(0);
-  const [userRecord, setUserRecord] = useState<number>(0);
   const { timeleft, timerecord, timestart, timereset } = useCountdown();
   const inputRef = useRef(null);
   const router = useRouter();
@@ -141,7 +145,6 @@ export default function InputDisplay() {
             } else {
               lineAppend(inputChar, "incorrect");
             }
-            
             break;
           case inputChar === (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText:
             lineAppend(inputChar, "correct");
@@ -171,6 +174,7 @@ export default function InputDisplay() {
     const inputEl = inputRef.current as HTMLInputElement;
     inputEl.hidden = true;
     inputEl.value = "";
+    setUserRecord(0);
     setOutputArr([]);
     setComplete(false);
     setInProgress(false);
