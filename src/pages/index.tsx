@@ -21,8 +21,8 @@ export default function Home() {
             <SignInButton>
               <button className="get_started w-64 h-28
               bg-rose-500 rounded-3xl"
-              disabled={true}>
-                Coming soon
+              disabled={false}>
+                Login 
               </button>
             </SignInButton>
             <Link href="/test" className="get_started

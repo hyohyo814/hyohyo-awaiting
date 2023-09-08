@@ -151,7 +151,6 @@ export default function InputDisplay({userRecord, setUserRecord}: Props) {
             strCount++;
             break;
           case inputChar !== (focusDiv(inputGroup)[strCount] as HTMLSpanElement)?.innerText: 
-            console.log(focusDiv(inputGroup))
             lineAppend(inputChar, "incorrect");
             strCount++;
             break;

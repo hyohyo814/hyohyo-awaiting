@@ -82,10 +82,14 @@ export default function Test() {
         {isSignedIn && <>
           <button
           onClick={saveHandle}
-          className="bg-rose-400 px-10 py-2 rounded-full">
+          className="bg-rose-400 px-6 py-2 rounded-full">
             Save Record: {userRecord === 0 ? "awaiting" : `${userRecord} s`}
           </button>
         </>}
+        <Link href="/profile" className="bg-orange-400 px-10
+        py-2 rounded-full">
+          Profile 
+        </Link>
       </div>
     </PageLayout>
   );

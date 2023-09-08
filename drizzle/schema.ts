@@ -23,6 +23,7 @@ export const codes = sqliteTable("codes", {
 export type Code = InferModel<typeof codes>;
 
 export const records = sqliteTable("records", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   userId: text("userId"),
   time: integer("time"),
   createdAt: integer("created_at").default(sql`(cast (unixepoch () as int))`),
