@@ -31,7 +31,8 @@ export const codeRouter = createTRPCRouter({
         records: {
           where: eq(records.userId, ctx.userId),
           columns: {
-            time: true
+            time: true,
+            id: true,
           }
         }
       }

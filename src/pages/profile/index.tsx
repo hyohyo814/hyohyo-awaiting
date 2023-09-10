@@ -24,26 +24,23 @@ export default function Profile() {
       </div>}
       <div className="flex flex-col
       gap-12 text-white text-3xl font-light
-      w-96 p-6 bg-slate-900/90 rounded-xl">
+      w-[56rem] p-6 bg-slate-900/90 rounded-xl">
         {!!isLoading && <div className="font-light">Loading User...</div>}
-        {!isLoading && <table className="font-light">
+        {!isLoading && <table className="font-light table-fixed">
           <tbody> 
             <tr className="border-b border-slate-500">
-              <td>&nbsp;</td>
               <td>Records</td>
             </tr>
             <tr className="">
               {!!data && data.map(v => {
                 return (
-                  <td>{v.id}</td> 
+                  <td key={v.id} className="w-36">{v.id}</td> 
               )})}
             </tr>
             {!!data && data.map(e => (
-              <tr>
-                {e.records.map(t => (
-                  <td>
-                    {t.time} s
-                  </td>
+              <tr key={e.id}>
+                {e.records.map((t, k) => (
+                  <td key={`${e.id}/${k}`}>{t.time} s</td>
                 ))}
               </tr>
             ))}
