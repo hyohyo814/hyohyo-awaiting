@@ -6,9 +6,8 @@ import { api } from "~/utils/api";
 
 export default function Profile() {
   const { user } = useUser();
-  const { data, isLoading } = api.users.getUserRecords.useQuery();
+  const { data, isLoading } = api.codes.getRecords.useQuery();
 
-  console.log(data)
   return (
     <PageLayout>
       {!!user && <div className="flex text-8xl
@@ -33,13 +32,21 @@ export default function Profile() {
               <td>&nbsp;</td>
               <td>Records</td>
             </tr>
-            {!!data?.records && data.records.map((v, k) => {
-              return (
-                <tr key={v.id} className="">
-                  <td>{k+1}</td>
-                  <td>{v.time} s</td> 
-                </tr>
-            )})}
+            <tr className="">
+              {!!data && data.map(v => {
+                return (
+                  <td>{v.id}</td> 
+              )})}
+            </tr>
+            {!!data && data.map(e => (
+              <tr>
+                {e.records.map(t => (
+                  <td>
+                    {t.time} s
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>}
       </div>

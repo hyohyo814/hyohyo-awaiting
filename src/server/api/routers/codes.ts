@@ -1,7 +1,8 @@
 // import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { codes } from "drizzle/schema";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { codes, records } from "drizzle/schema";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import { eq } from "drizzle-orm";
 
 export const codeRouter = createTRPCRouter({
   getCodes: publicProcedure.query(async ({ ctx }) => {
@@ -17,7 +18,24 @@ export const codeRouter = createTRPCRouter({
       data: randSel?.content?.split("\\n"),
       id: randSel.id,
     };
+  }),
+
+  getRecords: privateProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.codes.findMany({
+      columns: {
+        content: false,
+        createdAt: false,
+        updatedAt: false,
+      },
+      with: {
+        records: {
+          where: eq(records.userId, ctx.userId),
+          columns: {
+            time: true
+          }
+        }
+      }
+    }) 
   })
-  
 });
 
