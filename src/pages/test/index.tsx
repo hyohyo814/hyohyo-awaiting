@@ -29,7 +29,7 @@ export default function Test() {
   function saveHandle(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!!userRecord) {
-      mutate({ time: userRecord });
+      mutate({ time: userRecord, code: codeBlock?.id! });
     } else {
       console.error("failed to save data");
     }
@@ -59,7 +59,7 @@ export default function Test() {
           className="text_display flex flex-col w-1/2
           text-white text-2xl px-12 py-6 tracking-tight
           font-extralight font-mono">
-          <CodeDisplay codeBlock={codeBlock!} />
+          <CodeDisplay codeBlock={codeBlock?.data!} />
           <span className="mt-20 text-lg font-sans
           font-light whitespace-pre-wrap text-orange-500">
             NOTE:

@@ -16,6 +16,7 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         time: z.number(),
+        code: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -25,7 +26,7 @@ export const userRouter = createTRPCRouter({
       if (!userExist) {
         await ctx.db.insert(users).values({ userId: ctx.userId });
       }
-      return await ctx.db.insert(records).values({ userId: ctx.userId, time: input.time })    
+      return await ctx.db.insert(records).values({ userId: ctx.userId, time: input.time, codeId: input.code })    
   }),
 
   getUserRecords: privateProcedure.query(async ({ ctx }) => {
@@ -39,12 +40,16 @@ export const userRouter = createTRPCRouter({
       with: {
         records: {
           orderBy: asc(records.time),
+          limit: 5,
           columns: {
             id: true,
             time: true,
-            userId: false
+            userId: false,
+          },
+          with: {
+            code: true
           }
-        }
+        },
       }
     })
   })
