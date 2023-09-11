@@ -12,7 +12,7 @@ export default function Profile() {
     <PageLayout>
       {!!user && <div className="flex text-8xl
       font-semibold tracking-tight text-white
-       gap-x-12">
+      gap-x-12">
         <span>Hi! {user?.username}</span>
         <Image
           src={user.imageUrl}
@@ -34,7 +34,7 @@ export default function Profile() {
             <tr className="">
               {!!data && data.map(v => {
                 return (
-                  <td key={v.id} className="w-36">{v.id}</td> 
+                  <td key={v.id} className="w-36">{v.name}</td> 
               )})}
             </tr>
             {!!data && data.map(e => (

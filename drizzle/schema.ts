@@ -16,6 +16,7 @@ export type InsertUser = InferInsertModel<typeof users>;
 
 export const codes = sqliteTable("codes", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text("name"),
   content: text("content"),
   createdAt: integer("created_at").default(sql`(cast (unixepoch () as int))`),
   updatedAt: integer("created_at").default(sql`(cast (unixepoch () as int))`),
